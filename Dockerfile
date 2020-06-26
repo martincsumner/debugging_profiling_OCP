@@ -25,7 +25,13 @@ COPY ${JAR_FILE} app.jar
 EXPOSE 8080
 EXPOSE 10001
 
-# use this for running the debugger...
+# use this for running the debugger
+
+#----- PLEASE NOTE! -------
+#when running inside openshift, then do not add these line to the docker file - leave them commented.
+#but instead add them as you need to the environment tab for the deployment config. they will cause the pod to restart
+#and then the pod will be available for debugging or profiling.
+
 #ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 
 #use this for runnning the profiler...
