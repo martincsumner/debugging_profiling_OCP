@@ -1,0 +1,67 @@
+
+notes on the debug project
+===========================
+
+ oc get secret/pull-secret -n openshift-config -o json --export > my-secrets.json
+ oc create -f my-secrets.json
+ oc secrets link --for=pull builder pull-secret
+ oc secrets link --for=pull default pull-secret
+
+
+oc new-build --strategy docker --binary --docker-image registry.redhat.io/fuse7/fuse-java-openshift --name mytestapp
+oc set build-secret --pull bc/mytestapp pull-secret
+
+
+mvn clean install...
+oc start-build mytestapp --from-dir .  --follow
+
+
+//can we deploy directly from the generated config. - this does not map the ports or add the liveness probes.
+oc new-app mytestapp
+
+oc expose svc/mytestapp
+oc get route mytestapp
+
+
+
+Environvars - add these to the build-config.
+
+ for debuggging : JAVA_TOOL_OPTIONS = -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
+
+ for profiling : JAVA_TOOL_OPTIONS =  -agentpath:/usr/local/YourKit-JavaProfiler-2019.8/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all
+
+Debugging....
+
+oc port-forward mytestapp-4-cqg76 8000:8000
+
+
+set up a remote debugger -- pointing to the locally forwarded port
+we can use the locally running fabric8 plugin to generate resources for us....
+
+
+mvn -Popenshift fabric8:resource - generate the resources....
+k8 descriptors etc.
+
+
+
+www.yourkit.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
